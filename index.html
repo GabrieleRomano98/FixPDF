@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PDF Highlight Fixer</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>PDF Highlight Fixer</h1>
+    <p class="subtitle">
+      Fixes PDFs (exported from Google Docs/Slides) where highlighter marks
+      appear as <strong>opaque solid bands</strong> instead of translucent
+      highlights. Everything runs locally in your browser &mdash;
+      your PDF is never uploaded anywhere.
+    </p>
+
+    <div id="dropzone" class="dropzone">
+      <p>Drag &amp; drop a PDF here, or click to choose a file</p>
+      <input type="file" id="fileInput" accept="application/pdf" hidden />
+    </div>
+
+    <div id="status" class="status" hidden></div>
+
+    <div id="result" class="result" hidden>
+      <p id="resultSummary"></p>
+      <a id="downloadLink" class="button" download>Download fixed PDF</a>
+    </div>
+
+    <details class="details">
+      <summary>How does this work?</summary>
+      <p>
+        Some PDF exporters (notably Google Docs/Slides) draw highlighter
+        rectangles that reference an <code>ExtGState</code> resource (via the
+        <code>/Name gs</code> operator) intended to blend the highlight color
+        using <code>Multiply</code> mode &mdash; which is what lets black text
+        show through a light-colored highlight. However, the exporter
+        sometimes forgets to actually <em>define</em> that ExtGState resource
+        in the page. Viewers then fall back to fully opaque rendering,
+        producing solid yellow (or other colored) bands that hide the text
+        underneath.
+      </p>
+      <p>
+        This tool scans every page's content stream for <code>gs</code>
+        operators referencing undefined ExtGState resources and adds the
+        missing definitions (<code>Multiply</code> blend mode, or the
+        explicit alpha value encoded in the resource name, e.g.
+        <code>pgf@ca0.30</code>). It never touches or removes any text or
+        drawing content, so nothing becomes unselectable.
+      </p>
+    </details>
+
+  </main>
+
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
