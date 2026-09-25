@@ -158,6 +158,14 @@ const statusEl = document.getElementById('status');
 const resultEl = document.getElementById('result');
 const resultSummaryEl = document.getElementById('resultSummary');
 const downloadLink = document.getElementById('downloadLink');
+const downloadSound = document.getElementById('downloadSound');
+
+downloadLink.addEventListener('click', () => {
+  if (downloadSound) {
+    downloadSound.currentTime = 0;
+    downloadSound.play().catch((err) => console.warn('Could not play sound:', err));
+  }
+});
 
 function setStatus(message, isError = false) {
   statusEl.hidden = !message;
